@@ -7,7 +7,6 @@
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
         body {font-family: '맑은 고딕', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px;}
-
         .password-screen {display: flex; justify-content: center; align-items: center; min-height: 100vh;}
         .password-container {background: white; border-radius: 20px; padding: 50px 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 400px; width: 100%; text-align: center;}
         .password-title {font-size: 28px; margin-bottom: 10px; color: #333; font-weight: bold;}
@@ -19,7 +18,6 @@
         .password-btn {background: #667eea; color: white; border: none; padding: 12px 40px; font-size: 16px; border-radius: 8px; cursor: pointer; width: 100%; transition: all 0.3s; font-weight: bold;}
         .password-btn:hover {background: #764ba2; transform: scale(1.05);}
         .password-error {color: #dc2626; font-size: 14px; margin-top: 10px; display: none;}
-
         .admin-screen {display: none;}
         .admin-container {max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);}
         .title {text-align: center; font-size: 36px; margin-bottom: 40px; color: #333;}
@@ -64,7 +62,6 @@
         .firebase-status {text-align: center; padding: 8px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; font-weight: bold;}
         .firebase-status.connected {background: #d4edda; color: #155724;}
         .firebase-status.disconnected {background: #f8d7da; color: #721c24;}
-
         @media (max-width: 768px) {
             .password-container {padding: 30px 20px;}
             .password-title {font-size: 24px;}
@@ -76,8 +73,6 @@
     </style>
 </head>
 <body>
-
-    <!-- 비밀번호 입력 화면 -->
     <div class="password-screen" id="passwordScreen">
         <div class="password-container">
             <div class="password-title">🔐 관리자 로그인</div>
@@ -91,38 +86,31 @@
         </div>
     </div>
 
-    <!-- 관리자 페이지 -->
     <div class="admin-screen" id="adminScreen">
         <div class="admin-container">
             <button class="logout-btn" onclick="logout()">로그아웃</button>
             <h1 class="title">📝 관리자 페이지</h1>
-
             <div class="firebase-status" id="firebaseStatus">⏳ Firebase 연결 중...</div>
-
             <div class="game-selector">
                 <div class="game-label">게임을 선택하세요</div>
                 <div class="game-buttons">
                     <button class="game-select-btn active" onclick="selectGameAdmin('game1')">🙏 조이패밀리</button>
                     <button class="game-select-btn" onclick="selectGameAdmin('game2')">🔥 물불빵밥밤</button>
                     <button class="game-select-btn" onclick="selectGameAdmin('game3')">🌈 색깔맞추기</button>
-                    <!-- ✅ 색깔맞추기2 추가 -->
                     <button class="game-select-btn" onclick="selectGameAdmin('game4')">🎨 색깔맞추기2</button>
                 </div>
             </div>
-
             <div class="timing-section">
                 <div class="timing-title">⏱️ 플래시 타이밍 조절</div>
                 <div id="timingControls"></div>
                 <button class="save-btn" onclick="saveTimingOffsets()" style="width:100%;margin-top:15px;">💾 타이밍 저장 (모든 기기 적용)</button>
             </div>
-
             <div class="tab-group">
                 <button class="tab-btn active" onclick="switchTab('veryslow')">아주느림 🐌</button>
                 <button class="tab-btn" onclick="switchTab('slow')">느림 🐢</button>
                 <button class="tab-btn" onclick="switchTab('normal')">보통 🏃</button>
                 <button class="tab-btn" onclick="switchTab('fast')">빠름 ⚡</button>
             </div>
-
             <div id="veryslow" class="tab-content active">
                 <div id="veryslowMessage" class="message"></div>
                 <div id="veryslowContent"></div>
@@ -143,7 +131,6 @@
                 <div id="fastContent"></div>
                 <button class="save-btn" onclick="saveDifficulty('fast')">저장하기</button>
             </div>
-
             <div class="back-link">
                 <a href="index.html">← 게임으로 돌아가기</a>
             </div>
@@ -182,7 +169,8 @@
         let currentDifficultyAdmin = 'veryslow';
         let gameDataAdmin = {};
 
-        const DEFAULT_FLASH_TIMES = [5.20, 10.30, 15.45, 20.65, 25.75];
+        // ✅ 기본 플래시 타임 업데이트
+        const DEFAULT_FLASH_TIMES = [5.50, 10.70, 15.95, 21.25, 26.45];
         const ADMIN_PASSWORD = '1234';
 
         const defaultGameWords = {
@@ -276,7 +264,6 @@
                     5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
                 }
             },
-            // ✅ game4 추가
             game4: {
                 veryslow: {
                     1: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
@@ -472,7 +459,7 @@
                 const msgEl = document.getElementById(`${difficulty}Message`);
                 if (msgEl) {
                     msgEl.className = 'message success';
-                    msgEl.textContent = `✅ ${difficulty} 난이도가 Firebase에 저장되었습니다! 모든 기기에 적용됩니다 🎉`;
+                    msgEl.textContent = `✅ ${difficulty} 저장 완료! 모든 기기에 적용됩니다 🎉`;
                     msgEl.style.display = 'block';
                     setTimeout(() => { msgEl.style.display = 'none'; }, 3000);
                 }
@@ -494,7 +481,6 @@
                 document.getElementById('adminScreen').style.display = 'none';
             }
         });
-
     </script>
 </body>
 </html>
