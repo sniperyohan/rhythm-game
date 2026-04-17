@@ -348,9 +348,10 @@ async function initGame() {
     5: 23.90 / speed
   };
 
-  // 플래시 오프셋 로드
+  // ✅ 기본 플래시 타임 업데이트 (딱 맞는 값으로)
+  const baseTimes = [5.50, 10.70, 15.95, 21.25, 26.45];
+
   const firstFlashTimes = {};
-  const baseTimes = [5.20, 10.30, 15.45, 20.65, 25.75];
   for (let s = 1; s <= 5; s++) {
     const offsetMs = await getFlashOffset(currentGame, s);
     firstFlashTimes[s] = (baseTimes[s - 1] + offsetMs / 1000) / speed;
@@ -393,12 +394,10 @@ async function initGame() {
 
     const elapsed = (performance.now() - gameStartTime) / 1000;
 
-    // 인트로 숨김
     if (elapsed > introTime && document.getElementById('introScreen')) {
       hideIntro();
     }
 
-    // 게임 종료
     if (elapsed > totalGameTime) {
       gameRunning = false;
       clearAllCards();
@@ -406,7 +405,6 @@ async function initGame() {
       return;
     }
 
-    // 레벨 전환
     let newLevel = 0;
     for (let level = 1; level <= 5; level++) {
       if (elapsed >= cardShowTimes[level]) newLevel = level;
@@ -419,7 +417,6 @@ async function initGame() {
       console.log('📊 레벨 전환:', currentLevel, '| elapsed:', elapsed.toFixed(3));
     }
 
-    // 플래시 처리
     const flashStart = firstFlashTimes[currentLevel];
     if (flashStart && elapsed >= flashStart) {
       const timeInFlash = elapsed - flashStart;
