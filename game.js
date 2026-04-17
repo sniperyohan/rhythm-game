@@ -44,11 +44,17 @@ const wordImages = {
   game3: {
     '빨강': '🔴',
     '파랑': '🔵'
+  },
+  game4: {
+    '빨강': '🔴',
+    '파랑': '🔵',
+    '노랑': '🟡',
+    '검정': '⚫'
   }
 };
 
 // ============================================================
-// 기본 게임 데이터 (난이도 없이 게임별 레벨만)
+// 기본 게임 데이터
 // ============================================================
 const DEFAULT_GAME_DATA = {
   game1: {
@@ -71,6 +77,13 @@ const DEFAULT_GAME_DATA = {
     3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
     4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
     5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
+  },
+  game4: {
+    1: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
+    2: ['파랑','파랑','빨강','노랑','빨강','빨강','파랑','노랑'],
+    3: ['빨강','파랑','노랑','파랑','파랑','빨강','파랑','노랑'],
+    4: ['파랑','노랑','빨강','노랑','검정','파랑','빨강','파랑'],
+    5: ['빨강','노랑','검정','파랑','빨강','검정','파랑','노랑']
   }
 };
 
@@ -98,24 +111,17 @@ async function loadGameData() {
     const snapshot = await db.ref('gameData').get();
     if (snapshot.exists()) {
       const raw = snapshot.val();
-
-      // Firebase 데이터가 난이도 포함 구조인지 확인 후 변환
-      // admin이 game1/1~5 구조로 저장하므로 그대로 사용
-      // 만약 game1/veryslow/1~5 구조면 자동으로 veryslow 데이터만 추출
       const converted = {};
-      for (const game of ['game1', 'game2', 'game3']) {
+      for (const game of ['game1', 'game2', 'game3', 'game4']) {
         if (!raw[game]) {
           converted[game] = DEFAULT_GAME_DATA[game];
           continue;
         }
-        // 난이도 키가 있는지 확인
         const firstKey = Object.keys(raw[game])[0];
         if (['veryslow','slow','normal','fast'].includes(firstKey)) {
-          // 구 구조: game1/veryslow/1~5 → veryslow 데이터만 사용
           converted[game] = raw[game]['veryslow'] || DEFAULT_GAME_DATA[game];
-          console.log('⚠️ 구 구조 감지, veryslow 데이터 사용:', game);
+          console.log('⚠️ 구 구조 감지, veryslow 사용:', game);
         } else {
-          // 신 구조: game1/1~5 → 그대로 사용
           converted[game] = raw[game];
         }
       }
@@ -152,7 +158,7 @@ async function getFlashOffset(game, stage) {
       return parseFloat(snapshot.val()) || 0;
     }
   } catch (e) {
-    // Firebase 실패시 localStorage fallback
+    // fallback
   }
   return parseFloat(localStorage.getItem(`flashOffset_${game}_${stage}`) || '0');
 }
@@ -218,7 +224,8 @@ function startGame() {
     const gameLabels = {
       game1: '🙏 조이패밀리',
       game2: '🔥 물불빵밥밤',
-      game3: '🌈 색깔맞추기'
+      game3: '🌈 색깔맞추기',
+      game4: '🎨 색깔맞추기2'
     };
     const diffLabels = {
       veryslow: '아주느림 🐌',
@@ -266,7 +273,6 @@ function hideIntro() {
 function displayLevel(level) {
   console.log('📍 displayLevel:', { level, currentGame });
 
-  // 데이터 가져오기 (신 구조: game1/1~5)
   let words = null;
   if (gameData[currentGame] && gameData[currentGame][level]) {
     words = gameData[currentGame][level];
@@ -288,8 +294,8 @@ function displayLevel(level) {
     card.className = 'image-card';
     card.id = `card-${index}`;
 
-    if (currentGame === 'game3') {
-      card.textContent = wordImages.game3[word];
+    if (currentGame === 'game3' || currentGame === 'game4') {
+      card.textContent = wordImages[currentGame][word];
       card.style.fontSize = '50px';
       card.style.display = 'flex';
       card.style.justifyContent = 'center';
@@ -329,9 +335,9 @@ async function initGame() {
   const speedConfig = { veryslow: 0.6, slow: 0.8, normal: 1.0, fast: 1.3 };
   const speed = speedConfig[currentDifficulty];
 
-  const introTime     = 2.15 / speed;
-  const totalGameTime = 30   / speed;
-  const flashDuration = 2.6  / speed;
+  const introTime      = 2.15 / speed;
+  const totalGameTime  = 30   / speed;
+  const flashDuration  = 2.6  / speed;
   const imageFlashTime = flashDuration / 8;
 
   const cardShowTimes = {
