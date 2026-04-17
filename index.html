@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>조이패밀리 리듬게임</title>
+    <style>
+        * {margin:0;padding:0;box-sizing:border-box;}
+        body {font-family:'맑은 고딕',Arial,sans-serif;background:linear-gradient(-45deg,#6366f1,#8b5cf6,#ec4899,#f97316);background-size:400% 400%;animation:gradientShift 15s ease infinite;min-height:100vh;display:flex;justify-content:center;align-items:center;position:relative;overflow:hidden;}
+        body::before {content:'⭐';position:fixed;font-size:100px;top:8%;left:12%;z-index:0;animation:starGlow 2s ease-in-out infinite;pointer-events:none;filter:drop-shadow(0 0 15px rgba(255,255,255,0.8));}
+        body::after {content:'☀️';position:fixed;font-size:110px;top:5%;right:10%;z-index:0;animation:sunFloat 6s ease-in-out infinite;pointer-events:none;filter:drop-shadow(0 0 20px rgba(255,200,0,0.9));}
+        .game-container::before {content:'🌙';position:fixed;font-size:95px;top:75%;left:8%;z-index:-2;animation:moonFloat 8s ease-in-out infinite;pointer-events:none;filter:drop-shadow(0 0 15px rgba(200,200,255,0.7));}
+        .game-container::after {content:'☁️ ☁️ ☁️';position:fixed;font-size:60px;top:3%;left:-150px;z-index:-1;animation:cloudFloat1Top 22s linear infinite;pointer-events:none;opacity:0.6;}
+        .title::after {content:'☁️ ☁️';position:fixed;font-size:50px;bottom:3%;right:-100px;z-index:-1;animation:cloudFloat2Bottom 25s linear infinite;pointer-events:none;opacity:0.5;}
+        .title::before {content:'✨';position:fixed;font-size:50px;top:10%;left:20%;z-index:0;animation:sparkle 3s ease-in-out infinite;pointer-events:none;opacity:0.8;}
+        @keyframes gradientShift {0% {background-position:0% 50%;}25% {background-image:linear-gradient(-45deg,#8b5cf6,#ec4899,#f97316,#6366f1);}50% {background-position:100% 50%;}75% {background-image:linear-gradient(-45deg,#f97316,#6366f1,#8b5cf6,#ec4899);}100% {background-position:0% 50%;}}
+        @keyframes starGlow {0%,100% {opacity:0.6;transform:scale(1);}50% {opacity:1;transform:scale(1.1);}}
+        @keyframes sunFloat {0%,100% {transform:translateY(0) scale(1);}50% {transform:translateY(-20px) scale(1.05);}}
+        @keyframes moonFloat {0%,100% {transform:translateY(0) translateX(0) scale(1);}25% {transform:translateY(-15px) translateX(10px) scale(1.02);}75% {transform:translateY(-15px) translateX(-10px) scale(1.02);}}
+        @keyframes cloudFloat1Top {0% {left:-150px;}100% {left:calc(100vw + 150px);}}
+        @keyframes cloudFloat2Bottom {0% {right:-100px;}100% {right:calc(100vw + 100px);}}
+        @keyframes sparkle {0%,100% {opacity:0.3;transform:scale(0.8) rotate(0deg);}50% {opacity:1;transform:scale(1.2) rotate(180deg);}}
+        .game-container{width:100%;max-width:800px;background:white;border-radius:20px;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,0.3);position:relative;z-index:10;}
+        .title{text-align:center;font-size:32px;margin-bottom:30px;color:#333;position:relative;}
+        .screen{display:none;}
+        .screen.active{display:block;}
+        #introScreen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(-45deg,#6366f1,#8b5cf6,#ec4899,#f97316);background-size:400% 400%;animation:gradientShift 15s ease infinite, introMove 0.6s ease-in-out infinite;display:flex;justify-content:center;align-items:center;z-index:9999;font-size:36px;color:white;text-align:center;font-weight:bold;overflow:hidden;padding:20px;}
+        @keyframes introMove {0% {transform:scale(1);}50% {transform:scale(1.05);}100% {transform:scale(1);}}
+        #startScreen{text-align:center;}
+        .start-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;padding:18px 50px;font-size:20px;border-radius:10px;cursor:pointer;margin-top:30px;transition:all .3s;}
+        .start-btn:hover{background:linear-gradient(135deg,#8b5cf6,#ec4899);transform:scale(1.05);}
+        #settingScreen{text-align:center;}
+        .setting-group{margin:25px 0;}
+        .setting-label{font-size:18px;margin-bottom:15px;color:#333;font-weight:bold;}
+        .button-group{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+        .option-btn,.game-btn{padding:14px 20px;font-size:16px;border:2px solid #6366f1;background:white;color:#6366f1;border-radius:8px;cursor:pointer;transition:all .3s;flex:1;min-width:120px;}
+        .option-btn.active,.game-btn.active{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;}
+        .option-btn:hover,.game-btn:hover{transform:scale(1.05);}
+        .play-btn{background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;padding:14px 40px;font-size:18px;border-radius:8px;cursor:pointer;margin-top:25px;transition:all .3s;width:100%;max-width:300px;}
+        .play-btn:hover{background:linear-gradient(135deg,#059669,#047857);transform:scale(1.05);}
+        #gameScreen{text-align:center;}
+        .game-info{display:flex;justify-content:space-around;margin:15px 0;font-size:16px;flex-wrap:wrap;gap:10px;}
+        .info-item{background:#f0f0f0;padding:10px 15px;border-radius:8px;font-size:14px;}
+        .restart-btn{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:white;border:none;padding:14px 40px;font-size:18px;border-radius:8px;cursor:pointer;margin-top:15px;transition:all .3s;}
+        .restart-btn:hover{background:linear-gradient(135deg,#8b5cf6,#ec4899);transform:scale(1.05);}
+        #endingScreen{text-align:center;}
+        .ending-message{font-size:40px;margin:35px 0;font-weight:bold;color:#333;}
+        .admin-link{text-align:center;margin-top:15px;}
+        .admin-link a{color:#6366f1;text-decoration:none;font-size:14px;}
+        .admin-link a:hover{text-decoration:underline;}
+        #imagesGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0;}
+        .image-card{width:100%;aspect-ratio:1;border:4px solid #ddd;border-radius:10px;overflow:hidden;cursor:pointer;display:flex;justify-content:center;align-items:center;background:#f5f5f5;font-size:40px;font-weight:bold;}
+        .image-card img{width:100%;height:100%;object-fit:cover;}
+        .image-card.active{border-color:#FFD700;box-shadow:0 0 20px rgba(255,215,0,0.8);}
+        #progressFill{height:8px;background:linear-gradient(90deg,#6366f1,#8b5cf6,#ec4899);border-radius:4px;transition:width .1s;}
+        #progressBar{width:100%;height:8px;background:#ddd;border-radius:4px;margin:15px 0;overflow:hidden;}
+        @media (max-width: 768px) {
+            .game-container{padding:15px;border-radius:15px;}
+            .title{font-size:26px;margin-bottom:20px;}
+            .start-btn{padding:16px 40px;font-size:18px;margin-top:25px;}
+            .setting-group{margin:20px 0;}
+            .setting-label{font-size:16px;margin-bottom:12px;}
+            .option-btn,.game-btn{padding:12px 16px;font-size:14px;min-width:100px;}
+            .play-btn{padding:12px 30px;font-size:16px;margin-top:20px;}
+            #imagesGrid{grid-template-columns:repeat(4,1fr);gap:10px;margin:15px 0;}
+            .image-card{border:3px solid #ddd;border-radius:8px;font-size:32px;}
+            .game-info{font-size:14px;gap:8px;margin:12px 0;}
+            .info-item{padding:8px 12px;font-size:12px;}
+            .restart-btn{padding:12px 30px;font-size:16px;margin-top:12px;}
+            .ending-message{font-size:32px;margin:30px 0;}
+            .admin-link{margin-top:12px;}
+        }
+        @media (max-width: 480px) {
+            .game-container{padding:12px;border-radius:12px;}
+            .title{font-size:22px;margin-bottom:15px;}
+            .start-btn{padding:14px 35px;font-size:16px;}
+            .setting-group{margin:15px 0;}
+            .setting-label{font-size:14px;margin-bottom:10px;}
+            .button-group{gap:8px;}
+            .option-btn,.game-btn{padding:10px 12px;font-size:12px;min-width:90px;flex:1;}
+            .play-btn{padding:10px 25px;font-size:15px;margin-top:15px;}
+            #imagesGrid{grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;}
+            .image-card{border:2px solid #ddd;border-radius:6px;font-size:24px;}
+            .game-info{font-size:12px;gap:6px;margin:10px 0;}
+            .info-item{padding:6px 10px;font-size:11px;}
+            .restart-btn{padding:10px 25px;font-size:14px;margin-top:10px;}
+            .ending-message{font-size:28px;margin:25px 0;}
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="title">🎵 조이패밀리 리듬게임</h1>
+
+        <!-- 시작 화면 -->
+        <div id="startScreen" class="screen active">
+            <p style="font-size:20px;margin-bottom:25px;">게임을 시작하세요!</p>
+            <button class="start-btn" onclick="goToSetting()">시작하기</button>
+        </div>
+
+        <!-- 설정 화면 -->
+        <div id="settingScreen" class="screen">
+            <div class="setting-group">
+                <div class="setting-label">게임을 선택하세요</div>
+                <div class="button-group">
+                    <button class="game-btn active" onclick="selectGame('game1')">🙏 조이패밀리</button>
+                    <button class="game-btn" onclick="selectGame('game2')">🔥 물불빵밥밤</button>
+                    <button class="game-btn" onclick="selectGame('game3')">🌈 색깔맞추기</button>
+                </div>
+            </div>
+            <div class="setting-group">
+                <div class="setting-label">난이도를 선택하세요</div>
+                <div class="button-group">
+                    <button class="option-btn active" onclick="selectDifficulty('veryslow')">아주느림 🐌</button>
+                    <button class="option-btn" onclick="selectDifficulty('slow')">느림 🐢</button>
+                    <button class="option-btn" onclick="selectDifficulty('normal')">보통 🏃</button>
+                    <button class="option-btn" onclick="selectDifficulty('fast')">빠름 ⚡</button>
+                </div>
+            </div>
+            <button class="play-btn" onclick="startGame()">게임 시작!</button>
+        </div>
+
+        <!-- 게임 화면 -->
+        <div id="gameScreen" class="screen">
+            <div id="imagesGrid"></div>
+            <div id="progressBar"><div id="progressFill"></div></div>
+            <div class="game-info">
+                <div class="info-item">게임: <span id="gameDisplay">조이패밀리</span></div>
+                <div class="info-item">난이도: <span id="diffDisplay">아주느림</span></div>
+                <div class="info-item">레벨: <span id="levelDisplay">1단계</span></div>
+            </div>
+            <button class="restart-btn" onclick="goToSetting()">다시하기</button>
+        </div>
+
+        <!-- 종료 화면 -->
+        <div id="endingScreen" class="screen">
+            <div class="ending-message">🎉 게임 끝! 🎉</div>
+            <p style="font-size:18px;margin:20px 0;color:#666;">수고하셨습니다!</p>
+            <button class="restart-btn" onclick="goToStart()">처음으로</button>
+        </div>
+
+        <div class="admin-link"><a href="admin.html">📝 관리자 페이지</a></div>
+    </div>
+
+    <!-- ✅ Firebase SDK (compat 방식 - type=module 불필요) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+    <!-- ✅ game.js (type=module 제거!) -->
+    <script src="game.js"></script>
+</body>
+</html>
