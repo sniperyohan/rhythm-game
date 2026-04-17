@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지</title>
+    <style>
+        * {margin: 0; padding: 0; box-sizing: border-box;}
+        body {font-family: '맑은 고딕', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px;}
+
+        .password-screen {display: flex; justify-content: center; align-items: center; min-height: 100vh;}
+        .password-container {background: white; border-radius: 20px; padding: 50px 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 400px; width: 100%; text-align: center;}
+        .password-title {font-size: 28px; margin-bottom: 10px; color: #333; font-weight: bold;}
+        .password-subtitle {font-size: 16px; color: #666; margin-bottom: 30px;}
+        .password-input-group {margin-bottom: 20px;}
+        .password-input-group label {display: block; font-size: 14px; margin-bottom: 10px; color: #333; font-weight: bold;}
+        .password-input-group input {width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;}
+        .password-input-group input:focus {outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1);}
+        .password-btn {background: #667eea; color: white; border: none; padding: 12px 40px; font-size: 16px; border-radius: 8px; cursor: pointer; width: 100%; transition: all 0.3s; font-weight: bold;}
+        .password-btn:hover {background: #764ba2; transform: scale(1.05);}
+        .password-error {color: #dc2626; font-size: 14px; margin-top: 10px; display: none;}
+
+        .admin-screen {display: none;}
+        .admin-container {max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);}
+        .title {text-align: center; font-size: 36px; margin-bottom: 40px; color: #333;}
+        .game-selector {text-align: center; margin-bottom: 40px;}
+        .game-label {font-size: 20px; margin-bottom: 15px; color: #333; font-weight: bold;}
+        .game-buttons {display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;}
+        .game-select-btn {padding: 12px 24px; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.3s;}
+        .game-select-btn.active {background: #667eea; color: white;}
+        .game-select-btn:hover {transform: scale(1.05);}
+        .timing-section {background: #f9f9f9; padding: 20px; border-radius: 10px; margin-bottom: 30px;}
+        .timing-title {font-size: 24px; font-weight: bold; color: #333; margin-bottom: 20px; text-align: center;}
+        .timing-group {margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; border-left: 4px solid #667eea;}
+        .timing-label {font-size: 16px; font-weight: bold; color: #333; margin-bottom: 10px;}
+        .timing-input-group {display: flex; align-items: center; gap: 15px;}
+        .timing-input {padding: 10px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; width: 100px;}
+        .timing-input:focus {outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1);}
+        .timing-value {font-size: 14px; color: #666; min-width: 80px;}
+        .timing-button {padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; transition: all 0.3s;}
+        .timing-button:hover {background: #764ba2; transform: scale(1.05);}
+        .tab-group {display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;}
+        .tab-btn {padding: 12px 24px; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.3s;}
+        .tab-btn.active {background: #667eea; color: white;}
+        .tab-content {display: none;}
+        .tab-content.active {display: block;}
+        .level-group {margin-bottom: 30px;}
+        .level-title {font-size: 20px; font-weight: bold; color: #333; margin-bottom: 15px; padding: 10px; background: #f0f0f0; border-radius: 5px;}
+        .word-input-group {display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;}
+        .word-input {display: flex; flex-direction: column;}
+        .word-input label {font-size: 14px; margin-bottom: 5px; color: #555; font-weight: bold;}
+        .word-input input {padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; transition: border-color 0.3s;}
+        .word-input input:focus {outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1);}
+        .save-btn {background: #28a745; color: white; border: none; padding: 15px 50px; font-size: 18px; border-radius: 8px; cursor: pointer; margin-top: 20px; transition: all 0.3s; width: 100%;}
+        .save-btn:hover {background: #218838; transform: scale(1.05);}
+        .message {padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;}
+        .message.success {background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block;}
+        .message.error {background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block;}
+        .back-link {text-align: center; margin-top: 30px;}
+        .back-link a {color: #667eea; text-decoration: none; font-size: 16px;}
+        .back-link a:hover {text-decoration: underline;}
+        .logout-btn {background: #dc2626; color: white; border: none; padding: 10px 20px; font-size: 14px; border-radius: 6px; cursor: pointer; transition: all 0.3s; float: right;}
+        .logout-btn:hover {background: #b91c1c; transform: scale(1.05);}
+        .firebase-status {text-align: center; padding: 8px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; font-weight: bold;}
+        .firebase-status.connected {background: #d4edda; color: #155724;}
+        .firebase-status.disconnected {background: #f8d7da; color: #721c24;}
+
+        @media (max-width: 768px) {
+            .password-container {padding: 30px 20px;}
+            .password-title {font-size: 24px;}
+            .admin-container {padding: 20px;}
+            .title {font-size: 28px; margin-bottom: 25px;}
+            .game-buttons {flex-direction: column;}
+            .game-select-btn {width: 100%;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 비밀번호 입력 화면 -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-container">
+            <div class="password-title">🔐 관리자 로그인</div>
+            <div class="password-subtitle">비밀번호를 입력하세요</div>
+            <div class="password-input-group">
+                <label for="passwordInput">비밀번호</label>
+                <input type="password" id="passwordInput" placeholder="비밀번호 입력" onkeypress="if(event.key==='Enter') checkPassword()">
+            </div>
+            <button class="password-btn" onclick="checkPassword()">로그인</button>
+            <div class="password-error" id="passwordError">❌ 비밀번호가 틀렸습니다!</div>
+        </div>
+    </div>
+
+    <!-- 관리자 페이지 -->
+    <div class="admin-screen" id="adminScreen">
+        <div class="admin-container">
+            <button class="logout-btn" onclick="logout()">로그아웃</button>
+            <h1 class="title">📝 관리자 페이지</h1>
+
+            <div class="firebase-status" id="firebaseStatus">⏳ Firebase 연결 중...</div>
+
+            <div class="game-selector">
+                <div class="game-label">게임을 선택하세요</div>
+                <div class="game-buttons">
+                    <button class="game-select-btn active" onclick="selectGameAdmin('game1')">🙏 조이패밀리</button>
+                    <button class="game-select-btn" onclick="selectGameAdmin('game2')">🔥 물불빵밥밤</button>
+                    <button class="game-select-btn" onclick="selectGameAdmin('game3')">🌈 색깔맞추기</button>
+                </div>
+            </div>
+
+            <div class="timing-section">
+                <div class="timing-title">⏱️ 플래시 타이밍 조절</div>
+                <div id="timingControls"></div>
+                <button class="save-btn" onclick="saveTimingOffsets()" style="width:100%;margin-top:15px;">💾 타이밍 저장 (모든 기기 적용)</button>
+            </div>
+
+            <div class="tab-group">
+                <button class="tab-btn active" onclick="switchTab('veryslow')">아주느림 🐌</button>
+                <button class="tab-btn" onclick="switchTab('slow')">느림 🐢</button>
+                <button class="tab-btn" onclick="switchTab('normal')">보통 🏃</button>
+                <button class="tab-btn" onclick="switchTab('fast')">빠름 ⚡</button>
+            </div>
+
+            <div id="veryslow" class="tab-content active">
+                <div id="veryslowMessage" class="message"></div>
+                <div id="veryslowContent"></div>
+                <button class="save-btn" onclick="saveDifficulty('veryslow')">저장하기</button>
+            </div>
+            <div id="slow" class="tab-content">
+                <div id="slowMessage" class="message"></div>
+                <div id="slowContent"></div>
+                <button class="save-btn" onclick="saveDifficulty('slow')">저장하기</button>
+            </div>
+            <div id="normal" class="tab-content">
+                <div id="normalMessage" class="message"></div>
+                <div id="normalContent"></div>
+                <button class="save-btn" onclick="saveDifficulty('normal')">저장하기</button>
+            </div>
+            <div id="fast" class="tab-content">
+                <div id="fastMessage" class="message"></div>
+                <div id="fastContent"></div>
+                <button class="save-btn" onclick="saveDifficulty('fast')">저장하기</button>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← 게임으로 돌아가기</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (module 방식 - admin.html 전용) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3W71B8d3fXAewzAn3SpeFLrhXwYnbYiU",
+            authDomain: "joy-family-game.firebaseapp.com",
+            databaseURL: "https://joy-family-game-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "joy-family-game",
+            storageBucket: "joy-family-game.firebasestorage.app",
+            messagingSenderId: "1074722125872",
+            appId: "1:1074722125872:web:4da78793c358611a2a95f5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ── Firebase 상태 표시 ──────────────────────────────
+        function setFirebaseStatus(connected) {
+            const el = document.getElementById('firebaseStatus');
+            if (connected) {
+                el.textContent = '🟢 Firebase 연결됨 - 모든 기기에 동기화됩니다!';
+                el.className = 'firebase-status connected';
+            } else {
+                el.textContent = '🔴 Firebase 연결 실패 - 로컬 저장소 사용 중';
+                el.className = 'firebase-status disconnected';
+            }
+        }
+
+        let currentGameAdmin = 'game1';
+        let currentDifficultyAdmin = 'veryslow';
+        let gameDataAdmin = {};
+
+        const DEFAULT_FLASH_TIMES = [5.20, 10.30, 15.45, 20.65, 25.75];
+        const ADMIN_PASSWORD = '1234';
+
+        const defaultGameWords = {
+            game1: {
+                veryslow: {
+                    1: ['양','양','기도','양','기도','기도','양','양'],
+                    2: ['양','양','기도','수박','수박','수박','양','양'],
+                    3: ['양','기도','기도','예수님','예수님','양','양','수박'],
+                    4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
+                    5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
+                },
+                slow: {
+                    1: ['양','양','기도','양','기도','기도','양','양'],
+                    2: ['양','양','기도','수박','수박','수박','양','양'],
+                    3: ['양','기도','기도','예수님','예수님','양','양','수박'],
+                    4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
+                    5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
+                },
+                normal: {
+                    1: ['양','양','기도','양','기도','기도','양','양'],
+                    2: ['양','양','기도','수박','수박','수박','양','양'],
+                    3: ['양','기도','기도','예수님','예수님','양','양','수박'],
+                    4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
+                    5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
+                },
+                fast: {
+                    1: ['양','양','기도','양','기도','기도','양','양'],
+                    2: ['양','양','기도','수박','수박','수박','양','양'],
+                    3: ['양','기도','기도','예수님','예수님','양','양','수박'],
+                    4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
+                    5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
+                }
+            },
+            game2: {
+                veryslow: {
+                    1: ['물','불','물','불','불','물','불','물'],
+                    2: ['불','불','불','물','물','불','물','물'],
+                    3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
+                    4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
+                    5: ['빵','밥','빵','밤','밤','밥','밥','빵']
+                },
+                slow: {
+                    1: ['물','불','물','불','불','물','불','물'],
+                    2: ['불','불','불','물','물','불','물','물'],
+                    3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
+                    4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
+                    5: ['빵','밥','빵','밤','밤','밥','밥','빵']
+                },
+                normal: {
+                    1: ['물','불','물','불','불','물','불','물'],
+                    2: ['불','불','불','물','물','불','물','물'],
+                    3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
+                    4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
+                    5: ['빵','밥','빵','밤','밤','밥','밥','빵']
+                },
+                fast: {
+                    1: ['물','불','물','불','불','물','불','물'],
+                    2: ['불','불','불','물','물','불','물','물'],
+                    3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
+                    4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
+                    5: ['빵','밥','빵','밤','밤','밥','밥','빵']
+                }
+            },
+            game3: {
+                veryslow: {
+                    1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
+                    2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
+                    3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
+                    4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
+                    5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
+                },
+                slow: {
+                    1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
+                    2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
+                    3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
+                    4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
+                    5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
+                },
+                normal: {
+                    1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
+                    2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
+                    3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
+                    4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
+                    5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
+                },
+                fast: {
+                    1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
+                    2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
+                    3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
+                    4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
+                    5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
+                }
+            }
+        };
+
+        // ── 비밀번호 확인 ───────────────────────────────────
+        window.checkPassword = function() {
+            const input = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('passwordError');
+            if (input === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('adminScreen').style.display = 'block';
+                loadGameDataAdmin();
+            } else {
+                errorEl.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('passwordInput').focus();
+            }
+        };
+
+        // ── 로그아웃 ────────────────────────────────────────
+        window.logout = function() {
+            sessionStorage.removeItem('adminLoggedIn');
+            document.getElementById('adminScreen').style.display = 'none';
+            document.getElementById('passwordScreen').style.display = 'flex';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordError').style.display = 'none';
+        };
+
+        // ── 게임 데이터 로드 ────────────────────────────────
+        async function loadGameDataAdmin() {
+            try {
+                const snapshot = await get(ref(db, 'gameData'));
+                if (snapshot.exists()) {
+                    gameDataAdmin = snapshot.val();
+                    console.log('✅ Firebase에서 로드 성공');
+                } else {
+                    gameDataAdmin = JSON.parse(JSON.stringify(defaultGameWords));
+                    console.log('✅ 기본 데이터 사용');
+                }
+                setFirebaseStatus(true);
+            } catch (e) {
+                console.error('❌ Firebase 실패:', e);
+                const saved = localStorage.getItem('rhythmGameData');
+                gameDataAdmin = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(defaultGameWords));
+                setFirebaseStatus(false);
+            }
+            renderTimingControls();
+            renderLevelInputs(currentDifficultyAdmin);
+        }
+
+        // ── 게임 선택 ───────────────────────────────────────
+        window.selectGameAdmin = function(game) {
+            currentGameAdmin = game;
+            document.querySelectorAll('.game-select-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderTimingControls();
+            renderLevelInputs(currentDifficultyAdmin);
+        };
+
+        // ── 탭 전환 ─────────────────────────────────────────
+        window.switchTab = function(difficulty) {
+            currentDifficultyAdmin = difficulty;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(difficulty).classList.add('active');
+            renderLevelInputs(difficulty);
+        };
+
+        // ── 타이밍 컨트롤 렌더링 ───────────────────────────
+        async function renderTimingControls() {
+            const container = document.getElementById('timingControls');
+            container.innerHTML = '<div style="text-align:center;padding:10px;color:#666;">⏳ 로딩중...</div>';
+            let html = '';
+            for (let stage = 1; stage <= 5; stage++) {
+                const baseTime = DEFAULT_FLASH_TIMES[stage - 1];
+                let offset = 0;
+                try {
+                    const snapshot = await get(ref(db, `flashOffsets/${currentGameAdmin}/${stage}`));
+                    offset = snapshot.exists() ? parseFloat(snapshot.val()) : 0;
+                } catch (e) {
+                    offset = parseFloat(localStorage.getItem(`flashOffset_${currentGameAdmin}_${stage}`) || '0');
+                }
+                const currentTime = (baseTime * 1000 + offset) / 1000;
+                html += `
+                    <div class="timing-group">
+                        <div class="timing-label">🎬 ${stage}단계 플래시 타이밍 (기본: ${baseTime}초)</div>
+                        <div class="timing-input-group">
+                            <input type="number" id="offset_${stage}" class="timing-input" value="${offset}" step="100" placeholder="오프셋(ms)">
+                            <div class="timing-value">현재: ${currentTime.toFixed(2)}초</div>
+                            <button class="timing-button" onclick="resetTiming(${stage})">초기화</button>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        // ── 타이밍 초기화 ───────────────────────────────────
+        window.resetTiming = async function(stage) {
+            try {
+                await set(ref(db, `flashOffsets/${currentGameAdmin}/${stage}`), 0);
+                setFirebaseStatus(true);
+            } catch (e) {
+                console.warn('⚠️ Firebase 초기화 실패:', e);
+                setFirebaseStatus(false);
+            }
+            localStorage.setItem(`flashOffset_${currentGameAdmin}_${stage}`, '0');
+            const input = document.getElementById(`offset_${stage}`);
+            if (input) input.value = '0';
+            await renderTimingControls();
+            alert(`✅ ${stage}단계 타이밍이 초기화되었습니다.`);
+        };
+
+        // ── 타이밍 저장 ─────────────────────────────────────
+        window.saveTimingOffsets = async function() {
+            try {
+                for (let stage = 1; stage <= 5; stage++) {
+                    const el = document.getElementById(`offset_${stage}`);
+                    const offset = parseFloat(el?.value || '0');
+                    await set(ref(db, `flashOffsets/${currentGameAdmin}/${stage}`), offset);
+                    localStorage.setItem(`flashOffset_${currentGameAdmin}_${stage}`, String(offset));
+                }
+                setFirebaseStatus(true);
+                alert('✅ 타이밍이 저장되었습니다!\n🌍 PC, 모바일 모든 기기에 동일하게 적용됩니다!');
+            } catch (e) {
+                console.error('❌ Firebase 저장 실패:', e);
+                setFirebaseStatus(false);
+                alert('❌ 저장 실패. 네트워크를 확인해주세요.');
+            }
+        };
+
+        // ── 레벨 입력 렌더링 ────────────────────────────────
+        function renderLevelInputs(difficulty) {
+            const data = (gameDataAdmin[currentGameAdmin] && gameDataAdmin[currentGameAdmin][difficulty])
+                ? gameDataAdmin[currentGameAdmin][difficulty]
+                : defaultGameWords[currentGameAdmin][difficulty];
+            const container = document.getElementById(`${difficulty}Content`);
+            if (!container) return;
+            container.innerHTML = '';
+            for (let level = 1; level <= 5; level++) {
+                const levelWords = data[level] || [];
+                let html = `<div class="level-group"><div class="level-title">🎯 ${level}단계 단어</div><div class="word-input-group">`;
+                for (let i = 0; i < 8; i++) {
+                    html += `
+                        <div class="word-input">
+                            <label>${i + 1}번</label>
+                            <input type="text" id="${difficulty}_${level}_${i}" value="${levelWords[i] || ''}" placeholder="단어 입력">
+                        </div>
+                    `;
+                }
+                html += '</div></div>';
+                container.innerHTML += html;
+            }
+        }
+
+        // ── 난이도 단어 저장 ────────────────────────────────
+        window.saveDifficulty = async function(difficulty) {
+            const newData = JSON.parse(JSON.stringify(gameDataAdmin));
+            if (!newData[currentGameAdmin]) newData[currentGameAdmin] = {};
+            if (!newData[currentGameAdmin][difficulty]) newData[currentGameAdmin][difficulty] = {};
+            for (let level = 1; level <= 5; level++) {
+                newData[currentGameAdmin][difficulty][level] = [];
+                for (let i = 0; i < 8; i++) {
+                    const el = document.getElementById(`${difficulty}_${level}_${i}`);
+                    newData[currentGameAdmin][difficulty][level][i] = el ? el.value : '';
+                }
+            }
+            try {
+                await set(ref(db, 'gameData'), newData);
+                localStorage.setItem('rhythmGameData', JSON.stringify(newData));
+                gameDataAdmin = newData;
+                setFirebaseStatus(true);
+                const msgEl = document.getElementById(`${difficulty}Message`);
+                if (msgEl) {
+                    msgEl.className = 'message success';
+                    msgEl.textContent = `✅ ${difficulty} 난이도가 Firebase에 저장되었습니다! 모든 기기에 적용됩니다 🎉`;
+                    msgEl.style.display = 'block';
+                    setTimeout(() => { msgEl.style.display = 'none'; }, 3000);
+                }
+            } catch (e) {
+                console.error('❌ Firebase 저장 실패:', e);
+                setFirebaseStatus(false);
+                alert('❌ 저장 실패. 네트워크를 확인해주세요.');
+            }
+        };
+
+        // ── 페이지 로드 ─────────────────────────────────────
+        window.addEventListener('load', () => {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            if (isLoggedIn) {
+                document.getElementById('passwordScreen').style.display = 'none';
+                document.getElementById('adminScreen').style.display = 'block';
+                loadGameDataAdmin();
+            } else {
+                document.getElementById('passwordScreen').style.display = 'flex';
+                document.getElementById('adminScreen').style.display = 'none';
+            }
+        });
+
+    </script>
+</body>
+</html>
