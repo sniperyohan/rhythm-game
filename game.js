@@ -48,98 +48,29 @@ const wordImages = {
 };
 
 // ============================================================
-// 기본 게임 데이터
+// 기본 게임 데이터 (난이도 없이 게임별 레벨만)
 // ============================================================
 const DEFAULT_GAME_DATA = {
   game1: {
-    veryslow: {
-      1: ['양','양','기도','양','기도','기도','양','양'],
-      2: ['양','양','기도','수박','수박','수박','양','양'],
-      3: ['양','기도','기도','예수님','예수님','양','양','수박'],
-      4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
-      5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
-    },
-    slow: {
-      1: ['양','양','기도','양','기도','기도','양','양'],
-      2: ['양','양','기도','수박','수박','수박','양','양'],
-      3: ['양','기도','기도','예수님','예수님','양','양','수박'],
-      4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
-      5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
-    },
-    normal: {
-      1: ['양','양','기도','양','기도','기도','양','양'],
-      2: ['양','양','기도','수박','수박','수박','양','양'],
-      3: ['양','기도','기도','예수님','예수님','양','양','수박'],
-      4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
-      5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
-    },
-    fast: {
-      1: ['양','양','기도','양','기도','기도','양','양'],
-      2: ['양','양','기도','수박','수박','수박','양','양'],
-      3: ['양','기도','기도','예수님','예수님','양','양','수박'],
-      4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
-      5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
-    }
+    1: ['양','양','기도','양','기도','기도','양','양'],
+    2: ['양','양','기도','수박','수박','수박','양','양'],
+    3: ['양','기도','기도','예수님','예수님','양','양','수박'],
+    4: ['수박','예수님','양','기도','예수님','수박','양','기도'],
+    5: ['예수님','십자가','예수님','기도','십자가','예수님','수박','예수님']
   },
   game2: {
-    veryslow: {
-      1: ['물','불','물','불','불','물','불','물'],
-      2: ['불','불','불','물','물','불','물','물'],
-      3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
-      4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
-      5: ['빵','밥','빵','밤','밤','밥','밥','빵']
-    },
-    slow: {
-      1: ['물','불','물','불','불','물','불','물'],
-      2: ['불','불','불','물','물','불','물','물'],
-      3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
-      4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
-      5: ['빵','밥','빵','밤','밤','밥','밥','빵']
-    },
-    normal: {
-      1: ['물','불','물','불','불','물','불','물'],
-      2: ['불','불','불','물','물','불','물','물'],
-      3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
-      4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
-      5: ['빵','밥','빵','밤','밤','밥','밥','빵']
-    },
-    fast: {
-      1: ['물','불','물','불','불','물','불','물'],
-      2: ['불','불','불','물','물','불','물','물'],
-      3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
-      4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
-      5: ['빵','밥','빵','밤','밤','밥','밥','빵']
-    }
+    1: ['물','불','물','불','불','물','불','물'],
+    2: ['불','불','불','물','물','불','물','물'],
+    3: ['빵','밥','밤','빵','밤','밤','밥','밥'],
+    4: ['밥','밤','빵','밤','밥','밤','빵','밥'],
+    5: ['빵','밥','빵','밤','밤','밥','밥','빵']
   },
   game3: {
-    veryslow: {
-      1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
-      2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
-      3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
-      4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
-      5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
-    },
-    slow: {
-      1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
-      2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
-      3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
-      4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
-      5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
-    },
-    normal: {
-      1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
-      2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
-      3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
-      4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
-      5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
-    },
-    fast: {
-      1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
-      2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
-      3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
-      4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
-      5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
-    }
+    1: ['빨강','빨강','빨강','빨강','빨강','빨강','빨강','빨강'],
+    2: ['파랑','파랑','파랑','파랑','파랑','파랑','파랑','파랑'],
+    3: ['빨강','빨강','파랑','파랑','빨강','빨강','파랑','파랑'],
+    4: ['빨강','파랑','빨강','파랑','빨강','파랑','빨강','파랑'],
+    5: ['빨강','파랑','파랑','빨강','빨강','파랑','파랑','빨강']
   }
 };
 
@@ -166,7 +97,29 @@ async function loadGameData() {
   try {
     const snapshot = await db.ref('gameData').get();
     if (snapshot.exists()) {
-      gameData = snapshot.val();
+      const raw = snapshot.val();
+
+      // Firebase 데이터가 난이도 포함 구조인지 확인 후 변환
+      // admin이 game1/1~5 구조로 저장하므로 그대로 사용
+      // 만약 game1/veryslow/1~5 구조면 자동으로 veryslow 데이터만 추출
+      const converted = {};
+      for (const game of ['game1', 'game2', 'game3']) {
+        if (!raw[game]) {
+          converted[game] = DEFAULT_GAME_DATA[game];
+          continue;
+        }
+        // 난이도 키가 있는지 확인
+        const firstKey = Object.keys(raw[game])[0];
+        if (['veryslow','slow','normal','fast'].includes(firstKey)) {
+          // 구 구조: game1/veryslow/1~5 → veryslow 데이터만 사용
+          converted[game] = raw[game]['veryslow'] || DEFAULT_GAME_DATA[game];
+          console.log('⚠️ 구 구조 감지, veryslow 데이터 사용:', game);
+        } else {
+          // 신 구조: game1/1~5 → 그대로 사용
+          converted[game] = raw[game];
+        }
+      }
+      gameData = converted;
       console.log('✅ Firebase에서 gameData 로드 성공');
     } else {
       throw new Error('Firebase에 데이터 없음');
@@ -178,7 +131,7 @@ async function loadGameData() {
       try {
         gameData = JSON.parse(saved);
         console.log('✅ localStorage에서 gameData 로드');
-      } catch (parseError) {
+      } catch {
         gameData = JSON.parse(JSON.stringify(DEFAULT_GAME_DATA));
         console.log('✅ 기본 데이터 사용');
       }
@@ -199,7 +152,7 @@ async function getFlashOffset(game, stage) {
       return parseFloat(snapshot.val()) || 0;
     }
   } catch (e) {
-    // Firebase 실패 시 localStorage fallback
+    // Firebase 실패시 localStorage fallback
   }
   return parseFloat(localStorage.getItem(`flashOffset_${game}_${stage}`) || '0');
 }
@@ -262,12 +215,21 @@ function startGame() {
     document.getElementById('settingScreen').classList.remove('active');
     document.getElementById('gameScreen').classList.add('active');
 
-    const gameLabels = { game1: '🙏 조이패밀리', game2: '🔥 물불빵밥밤', game3: '🌈 색깔맞추기' };
-    const diffLabels = { veryslow: '아주느림 🐌', slow: '느림 🐢', normal: '보통 🏃', fast: '빠름 ⚡' };
+    const gameLabels = {
+      game1: '🙏 조이패밀리',
+      game2: '🔥 물불빵밥밤',
+      game3: '🌈 색깔맞추기'
+    };
+    const diffLabels = {
+      veryslow: '아주느림 🐌',
+      slow: '느림 🐢',
+      normal: '보통 🏃',
+      fast: '빠름 ⚡'
+    };
     document.getElementById('gameDisplay').textContent = gameLabels[currentGame];
     document.getElementById('diffDisplay').textContent = diffLabels[currentDifficulty];
 
-    console.log('✅ 게임 시작 - 게임:', currentGame, '난이도:', currentDifficulty);
+    console.log('✅ 게임 시작 - 게임:', currentGame, '| 난이도:', currentDifficulty);
     initGame();
   });
 }
@@ -280,7 +242,8 @@ function displayIntro() {
     const screen = document.createElement('div');
     screen.id = 'introScreen';
     screen.style.cssText = `
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
       background: linear-gradient(-45deg, #6366f1, #8b5cf6, #ec4899, #f97316);
       background-size: 400% 400%;
       display: flex; justify-content: center; align-items: center;
@@ -301,20 +264,19 @@ function hideIntro() {
 // 레벨 카드 표시
 // ============================================================
 function displayLevel(level) {
-  console.log('📍 displayLevel:', { level, currentGame, currentDifficulty });
+  console.log('📍 displayLevel:', { level, currentGame });
 
-  if (!gameData[currentGame]) {
-    console.error('❌ gameData에 currentGame 없음:', currentGame);
-    gameData = JSON.parse(JSON.stringify(DEFAULT_GAME_DATA));
-  }
-  if (!gameData[currentGame][currentDifficulty]) {
-    console.error('❌ currentDifficulty 없음:', currentDifficulty);
-    gameData[currentGame][currentDifficulty] = DEFAULT_GAME_DATA[currentGame][currentDifficulty];
+  // 데이터 가져오기 (신 구조: game1/1~5)
+  let words = null;
+  if (gameData[currentGame] && gameData[currentGame][level]) {
+    words = gameData[currentGame][level];
+  } else {
+    console.warn('⚠️ Firebase 데이터 없음, 기본값 사용');
+    words = DEFAULT_GAME_DATA[currentGame][level];
   }
 
-  const words = gameData[currentGame][currentDifficulty][level];
   if (!words) {
-    console.error('❌ words undefined:', { currentGame, currentDifficulty, level });
+    console.error('❌ words undefined:', { currentGame, level });
     return;
   }
 
@@ -356,7 +318,8 @@ function clearAllCards() {
 }
 
 function updateProgress(elapsed, total) {
-  document.getElementById('progressFill').style.width = Math.min((elapsed / total) * 100, 100) + '%';
+  document.getElementById('progressFill').style.width =
+    Math.min((elapsed / total) * 100, 100) + '%';
 }
 
 // ============================================================
@@ -366,9 +329,9 @@ async function initGame() {
   const speedConfig = { veryslow: 0.6, slow: 0.8, normal: 1.0, fast: 1.3 };
   const speed = speedConfig[currentDifficulty];
 
-  const introTime      = 2.15 / speed;
-  const totalGameTime  = 30   / speed;
-  const flashDuration  = 2.6  / speed;
+  const introTime     = 2.15 / speed;
+  const totalGameTime = 30   / speed;
+  const flashDuration = 2.6  / speed;
   const imageFlashTime = flashDuration / 8;
 
   const cardShowTimes = {
@@ -379,7 +342,7 @@ async function initGame() {
     5: 23.90 / speed
   };
 
-  // 플래시 오프셋 로드 (Firebase 또는 localStorage)
+  // 플래시 오프셋 로드
   const firstFlashTimes = {};
   const baseTimes = [5.20, 10.30, 15.45, 20.65, 25.75];
   for (let s = 1; s <= 5; s++) {
@@ -387,36 +350,34 @@ async function initGame() {
     firstFlashTimes[s] = (baseTimes[s - 1] + offsetMs / 1000) / speed;
   }
 
-  console.log('🎮 initGame | speed:', speed, '| totalGameTime:', totalGameTime.toFixed(2));
+  console.log('🎮 speed:', speed, '| totalGameTime:', totalGameTime.toFixed(2));
   console.log('⏱️ cardShowTimes:', cardShowTimes);
   console.log('💥 firstFlashTimes:', firstFlashTimes);
 
-  // ✅ 핵심: 오디오 재사용 + oncanplay 콜백에서 playbackRate 설정
+  // ✅ 오디오 재사용 + oncanplay에서 playbackRate 설정
   if (!backgroundAudio) {
     backgroundAudio = new Audio('assets/sounds/background.mp3');
   }
   backgroundAudio.currentTime = 0;
   backgroundAudio.loop = false;
 
-  // oncanplay: 오디오 준비되면 즉시 playbackRate 적용 후 play
   backgroundAudio.oncanplay = function () {
-    console.log('🎵 oncanplay 발동 | playbackRate 설정:', speed);
+    console.log('🎵 oncanplay | playbackRate:', speed);
     backgroundAudio.playbackRate = speed;
     backgroundAudio.play().catch(e => console.warn('오디오 재생 실패:', e));
-    backgroundAudio.oncanplay = null; // 한 번만 실행
+    backgroundAudio.oncanplay = null;
   };
 
-  // 이미 로드된 경우 (readyState 3 또는 4) 즉시 실행
   if (backgroundAudio.readyState >= 3) {
-    console.log('🎵 이미 로드됨 | 즉시 playbackRate 설정:', speed);
+    console.log('🎵 즉시 재생 | playbackRate:', speed);
     backgroundAudio.playbackRate = speed;
     backgroundAudio.play().catch(e => console.warn('오디오 재생 실패:', e));
     backgroundAudio.oncanplay = null;
   }
 
-  let gameRunning    = true;
-  let gameStartTime  = performance.now();
-  let currentLevel   = 0;
+  let gameRunning = true;
+  let gameStartTime = performance.now();
+  let currentLevel = 0;
   let currentImageIndex = -1;
 
   displayIntro();
