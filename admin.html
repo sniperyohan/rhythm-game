@@ -7,6 +7,7 @@
     <style>
         * {margin: 0; padding: 0; box-sizing: border-box;}
         body {font-family: '맑은 고딕', Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px;}
+
         .password-screen {display: flex; justify-content: center; align-items: center; min-height: 100vh;}
         .password-container {background: white; border-radius: 20px; padding: 50px 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 400px; width: 100%; text-align: center;}
         .password-title {font-size: 28px; margin-bottom: 10px; color: #333; font-weight: bold;}
@@ -18,6 +19,7 @@
         .password-btn {background: #667eea; color: white; border: none; padding: 12px 40px; font-size: 16px; border-radius: 8px; cursor: pointer; width: 100%; transition: all 0.3s; font-weight: bold;}
         .password-btn:hover {background: #764ba2; transform: scale(1.05);}
         .password-error {color: #dc2626; font-size: 14px; margin-top: 10px; display: none;}
+
         .admin-screen {display: none;}
         .admin-container {max-width: 900px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);}
         .title {text-align: center; font-size: 36px; margin-bottom: 40px; color: #333;}
@@ -37,6 +39,36 @@
         .timing-value {font-size: 14px; color: #666; min-width: 80px;}
         .timing-button {padding: 8px 16px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; transition: all 0.3s;}
         .timing-button:hover {background: #764ba2; transform: scale(1.05);}
+
+        /* 단어 수정 잠금 섹션 */
+        .word-lock-section {margin-top: 40px;}
+        .word-lock-header {display: flex; align-items: center; justify-content: space-between; background: #f0f0f0; padding: 20px; border-radius: 10px; margin-bottom: 20px;}
+        .word-lock-title {font-size: 22px; font-weight: bold; color: #333;}
+        .unlock-btn {background: #f97316; color: white; border: none; padding: 10px 24px; font-size: 15px; border-radius: 8px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 8px;}
+        .unlock-btn:hover {background: #ea580c; transform: scale(1.05);}
+        .unlock-btn.unlocked {background: #10b981;}
+        .unlock-btn.unlocked:hover {background: #059669;}
+        .word-content {display: none;}
+        .word-content.visible {display: block;}
+
+        /* 2차 비밀번호 모달 */
+        .modal-overlay {display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;}
+        .modal-overlay.active {display: flex;}
+        .modal-box {background: white; border-radius: 20px; padding: 40px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.4);}
+        .modal-title {font-size: 24px; font-weight: bold; color: #333; margin-bottom: 8px;}
+        .modal-subtitle {font-size: 14px; color: #666; margin-bottom: 25px;}
+        .modal-input {width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 15px; text-align: center; letter-spacing: 4px;}
+        .modal-input:focus {outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102,126,234,0.1);}
+        .modal-btn {background: #667eea; color: white; border: none; padding: 12px 40px; font-size: 16px; border-radius: 8px; cursor: pointer; width: 100%; transition: all 0.3s; font-weight: bold; margin-bottom: 10px;}
+        .modal-btn:hover {background: #764ba2;}
+        .modal-cancel {background: #ddd; color: #555; border: none; padding: 10px 40px; font-size: 14px; border-radius: 8px; cursor: pointer; width: 100%; transition: all 0.3s;}
+        .modal-cancel:hover {background: #ccc;}
+        .modal-error {color: #dc2626; font-size: 14px; margin-bottom: 10px; display: none;}
+        .modal-attempts {font-size: 13px; color: #f97316; margin-bottom: 10px; display: none; font-weight: bold;}
+        .modal-locked {background: #fef2f2; border: 2px solid #fca5a5; border-radius: 10px; padding: 20px; display: none;}
+        .modal-locked-text {color: #dc2626; font-size: 16px; font-weight: bold; margin-bottom: 8px;}
+        .modal-locked-timer {color: #dc2626; font-size: 24px; font-weight: bold;}
+
         .tab-group {display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap;}
         .tab-btn {padding: 12px 24px; border: 2px solid #667eea; background: white; color: #667eea; border-radius: 8px; cursor: pointer; font-size: 16px; transition: all 0.3s;}
         .tab-btn.active {background: #667eea; color: white;}
@@ -53,7 +85,6 @@
         .save-btn:hover {background: #218838; transform: scale(1.05);}
         .message {padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none;}
         .message.success {background: #d4edda; color: #155724; border: 1px solid #c3e6cb; display: block;}
-        .message.error {background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; display: block;}
         .back-link {text-align: center; margin-top: 30px;}
         .back-link a {color: #667eea; text-decoration: none; font-size: 16px;}
         .back-link a:hover {text-decoration: underline;}
@@ -62,17 +93,19 @@
         .firebase-status {text-align: center; padding: 8px; border-radius: 6px; margin-bottom: 15px; font-size: 14px; font-weight: bold;}
         .firebase-status.connected {background: #d4edda; color: #155724;}
         .firebase-status.disconnected {background: #f8d7da; color: #721c24;}
+
         @media (max-width: 768px) {
-            .password-container {padding: 30px 20px;}
-            .password-title {font-size: 24px;}
             .admin-container {padding: 20px;}
             .title {font-size: 28px; margin-bottom: 25px;}
             .game-buttons {flex-direction: column;}
             .game-select-btn {width: 100%;}
+            .word-lock-header {flex-direction: column; gap: 15px; text-align: center;}
         }
     </style>
 </head>
 <body>
+
+    <!-- 1차 비밀번호 입력 화면 -->
     <div class="password-screen" id="passwordScreen">
         <div class="password-container">
             <div class="password-title">🔐 관리자 로그인</div>
@@ -86,11 +119,36 @@
         </div>
     </div>
 
+    <!-- 2차 비밀번호 모달 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <div class="modal-title">🔒 단어 수정 잠금</div>
+            <div class="modal-subtitle">단어 수정을 위한 추가 비밀번호를 입력하세요</div>
+
+            <div id="modalLocked" class="modal-locked">
+                <div class="modal-locked-text">⛔ 너무 많이 틀렸습니다!</div>
+                <div style="font-size:14px;color:#666;margin-bottom:10px;">5분 후 다시 시도하세요</div>
+                <div class="modal-locked-timer" id="lockTimer">5:00</div>
+            </div>
+
+            <div id="modalForm">
+                <div class="modal-error" id="modalError">❌ 비밀번호가 틀렸습니다!</div>
+                <div class="modal-attempts" id="modalAttempts"></div>
+                <input type="password" id="modalInput" class="modal-input" placeholder="••••••" onkeypress="if(event.key==='Enter') checkWordPassword()">
+                <button class="modal-btn" onclick="checkWordPassword()">확인</button>
+                <button class="modal-cancel" onclick="closeModal()">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 관리자 페이지 -->
     <div class="admin-screen" id="adminScreen">
         <div class="admin-container">
             <button class="logout-btn" onclick="logout()">로그아웃</button>
             <h1 class="title">📝 관리자 페이지</h1>
+
             <div class="firebase-status" id="firebaseStatus">⏳ Firebase 연결 중...</div>
+
             <div class="game-selector">
                 <div class="game-label">게임을 선택하세요</div>
                 <div class="game-buttons">
@@ -100,37 +158,53 @@
                     <button class="game-select-btn" onclick="selectGameAdmin('game4')">🎨 색깔맞추기2</button>
                 </div>
             </div>
+
+            <!-- 플래시 타이밍 (1차 비밀번호로 접근 가능) -->
             <div class="timing-section">
                 <div class="timing-title">⏱️ 플래시 타이밍 조절</div>
                 <div id="timingControls"></div>
                 <button class="save-btn" onclick="saveTimingOffsets()" style="width:100%;margin-top:15px;">💾 타이밍 저장 (모든 기기 적용)</button>
             </div>
-            <div class="tab-group">
-                <button class="tab-btn active" onclick="switchTab('veryslow')">아주느림 🐌</button>
-                <button class="tab-btn" onclick="switchTab('slow')">느림 🐢</button>
-                <button class="tab-btn" onclick="switchTab('normal')">보통 🏃</button>
-                <button class="tab-btn" onclick="switchTab('fast')">빠름 ⚡</button>
+
+            <!-- 단어 수정 (2차 비밀번호 필요) -->
+            <div class="word-lock-section">
+                <div class="word-lock-header">
+                    <div class="word-lock-title">📝 단어 수정</div>
+                    <button class="unlock-btn" id="unlockBtn" onclick="openModal()">
+                        🔒 잠금 해제 필요
+                    </button>
+                </div>
+
+                <div class="word-content" id="wordContent">
+                    <div class="tab-group">
+                        <button class="tab-btn active" onclick="switchTab('veryslow')">아주느림 🐌</button>
+                        <button class="tab-btn" onclick="switchTab('slow')">느림 🐢</button>
+                        <button class="tab-btn" onclick="switchTab('normal')">보통 🏃</button>
+                        <button class="tab-btn" onclick="switchTab('fast')">빠름 ⚡</button>
+                    </div>
+                    <div id="veryslow" class="tab-content active">
+                        <div id="veryslowMessage" class="message"></div>
+                        <div id="veryslowContent"></div>
+                        <button class="save-btn" onclick="saveDifficulty('veryslow')">저장하기</button>
+                    </div>
+                    <div id="slow" class="tab-content">
+                        <div id="slowMessage" class="message"></div>
+                        <div id="slowContent"></div>
+                        <button class="save-btn" onclick="saveDifficulty('slow')">저장하기</button>
+                    </div>
+                    <div id="normal" class="tab-content">
+                        <div id="normalMessage" class="message"></div>
+                        <div id="normalContent"></div>
+                        <button class="save-btn" onclick="saveDifficulty('normal')">저장하기</button>
+                    </div>
+                    <div id="fast" class="tab-content">
+                        <div id="fastMessage" class="message"></div>
+                        <div id="fastContent"></div>
+                        <button class="save-btn" onclick="saveDifficulty('fast')">저장하기</button>
+                    </div>
+                </div>
             </div>
-            <div id="veryslow" class="tab-content active">
-                <div id="veryslowMessage" class="message"></div>
-                <div id="veryslowContent"></div>
-                <button class="save-btn" onclick="saveDifficulty('veryslow')">저장하기</button>
-            </div>
-            <div id="slow" class="tab-content">
-                <div id="slowMessage" class="message"></div>
-                <div id="slowContent"></div>
-                <button class="save-btn" onclick="saveDifficulty('slow')">저장하기</button>
-            </div>
-            <div id="normal" class="tab-content">
-                <div id="normalMessage" class="message"></div>
-                <div id="normalContent"></div>
-                <button class="save-btn" onclick="saveDifficulty('normal')">저장하기</button>
-            </div>
-            <div id="fast" class="tab-content">
-                <div id="fastMessage" class="message"></div>
-                <div id="fastContent"></div>
-                <button class="save-btn" onclick="saveDifficulty('fast')">저장하기</button>
-            </div>
+
             <div class="back-link">
                 <a href="index.html">← 게임으로 돌아가기</a>
             </div>
@@ -154,6 +228,137 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // ── 상수 ────────────────────────────────────────────
+        const ADMIN_PASSWORD      = '1234';
+        const WORD_PASSWORD       = '5678';   // ✅ 2차 비밀번호 (원하시면 변경!)
+        const MAX_ATTEMPTS        = 5;
+        const LOCK_DURATION_MS    = 5 * 60 * 1000; // 5분
+        const DEFAULT_FLASH_TIMES = [5.50, 10.70, 15.95, 21.25, 26.45];
+
+        // ── 잠금 상태 관리 ──────────────────────────────────
+        let wordUnlocked   = false;
+        let failCount      = parseInt(sessionStorage.getItem('wordFailCount') || '0');
+        let lockUntil      = parseInt(sessionStorage.getItem('wordLockUntil') || '0');
+        let lockTimerInterval = null;
+
+        function isLocked() {
+            if (lockUntil && Date.now() < lockUntil) return true;
+            if (lockUntil && Date.now() >= lockUntil) {
+                // 잠금 해제
+                sessionStorage.removeItem('wordLockUntil');
+                sessionStorage.removeItem('wordFailCount');
+                failCount = 0;
+                lockUntil = 0;
+            }
+            return false;
+        }
+
+        // ── 모달 열기/닫기 ──────────────────────────────────
+        window.openModal = function() {
+            if (wordUnlocked) {
+                // 이미 잠금 해제됨 → 다시 잠금
+                wordUnlocked = false;
+                document.getElementById('wordContent').classList.remove('visible');
+                const btn = document.getElementById('unlockBtn');
+                btn.textContent = '🔒 잠금 해제 필요';
+                btn.classList.remove('unlocked');
+                return;
+            }
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.add('active');
+            document.getElementById('modalInput').value = '';
+            document.getElementById('modalError').style.display = 'none';
+
+            if (isLocked()) {
+                showLockScreen();
+            } else {
+                document.getElementById('modalLocked').style.display = 'none';
+                document.getElementById('modalForm').style.display = 'block';
+                updateAttemptsDisplay();
+                setTimeout(() => document.getElementById('modalInput').focus(), 100);
+            }
+        };
+
+        window.closeModal = function() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            if (lockTimerInterval) { clearInterval(lockTimerInterval); lockTimerInterval = null; }
+        };
+
+        function showLockScreen() {
+            document.getElementById('modalForm').style.display = 'none';
+            document.getElementById('modalLocked').style.display = 'block';
+            startLockTimer();
+        }
+
+        function startLockTimer() {
+            if (lockTimerInterval) clearInterval(lockTimerInterval);
+            lockTimerInterval = setInterval(() => {
+                const remaining = lockUntil - Date.now();
+                if (remaining <= 0) {
+                    clearInterval(lockTimerInterval);
+                    document.getElementById('modalLocked').style.display = 'none';
+                    document.getElementById('modalForm').style.display = 'block';
+                    failCount = 0;
+                    sessionStorage.removeItem('wordFailCount');
+                    sessionStorage.removeItem('wordLockUntil');
+                    updateAttemptsDisplay();
+                    return;
+                }
+                const min = Math.floor(remaining / 60000);
+                const sec = Math.floor((remaining % 60000) / 1000);
+                document.getElementById('lockTimer').textContent =
+                    `${min}:${sec.toString().padStart(2, '0')}`;
+            }, 500);
+        }
+
+        function updateAttemptsDisplay() {
+            const el = document.getElementById('modalAttempts');
+            if (failCount > 0) {
+                el.style.display = 'block';
+                el.textContent = `⚠️ 틀린 횟수: ${failCount}/${MAX_ATTEMPTS}회 (${MAX_ATTEMPTS - failCount}번 남음)`;
+            } else {
+                el.style.display = 'none';
+            }
+        }
+
+        // ── 2차 비밀번호 확인 ───────────────────────────────
+        window.checkWordPassword = function() {
+            if (isLocked()) { showLockScreen(); return; }
+
+            const input = document.getElementById('modalInput').value;
+            const errorEl = document.getElementById('modalError');
+
+            if (input === WORD_PASSWORD) {
+                // 성공
+                failCount = 0;
+                sessionStorage.removeItem('wordFailCount');
+                sessionStorage.removeItem('wordLockUntil');
+                wordUnlocked = true;
+                closeModal();
+                document.getElementById('wordContent').classList.add('visible');
+                const btn = document.getElementById('unlockBtn');
+                btn.innerHTML = '🔓 잠금 해제됨 (클릭시 재잠금)';
+                btn.classList.add('unlocked');
+                renderLevelInputs(currentDifficultyAdmin);
+            } else {
+                // 실패
+                failCount++;
+                sessionStorage.setItem('wordFailCount', String(failCount));
+                errorEl.style.display = 'block';
+                document.getElementById('modalInput').value = '';
+
+                if (failCount >= MAX_ATTEMPTS) {
+                    lockUntil = Date.now() + LOCK_DURATION_MS;
+                    sessionStorage.setItem('wordLockUntil', String(lockUntil));
+                    showLockScreen();
+                } else {
+                    updateAttemptsDisplay();
+                    setTimeout(() => document.getElementById('modalInput').focus(), 100);
+                }
+            }
+        };
+
+        // ── Firebase 상태 ────────────────────────────────────
         function setFirebaseStatus(connected) {
             const el = document.getElementById('firebaseStatus');
             if (connected) {
@@ -168,10 +373,6 @@
         let currentGameAdmin = 'game1';
         let currentDifficultyAdmin = 'veryslow';
         let gameDataAdmin = {};
-
-        // ✅ 기본 플래시 타임 업데이트
-        const DEFAULT_FLASH_TIMES = [5.50, 10.70, 15.95, 21.25, 26.45];
-        const ADMIN_PASSWORD = '1234';
 
         const defaultGameWords = {
             game1: {
@@ -296,6 +497,7 @@
             }
         };
 
+        // ── 1차 비밀번호 ─────────────────────────────────────
         window.checkPassword = function() {
             const input = document.getElementById('passwordInput').value;
             const errorEl = document.getElementById('passwordError');
@@ -313,12 +515,18 @@
 
         window.logout = function() {
             sessionStorage.removeItem('adminLoggedIn');
+            wordUnlocked = false;
             document.getElementById('adminScreen').style.display = 'none';
             document.getElementById('passwordScreen').style.display = 'flex';
             document.getElementById('passwordInput').value = '';
             document.getElementById('passwordError').style.display = 'none';
+            document.getElementById('wordContent').classList.remove('visible');
+            const btn = document.getElementById('unlockBtn');
+            btn.innerHTML = '🔒 잠금 해제 필요';
+            btn.classList.remove('unlocked');
         };
 
+        // ── 게임 데이터 로드 ─────────────────────────────────
         async function loadGameDataAdmin() {
             try {
                 const snapshot = await get(ref(db, 'gameData'));
@@ -327,17 +535,14 @@
                     console.log('✅ Firebase에서 로드 성공');
                 } else {
                     gameDataAdmin = JSON.parse(JSON.stringify(defaultGameWords));
-                    console.log('✅ 기본 데이터 사용');
                 }
                 setFirebaseStatus(true);
             } catch (e) {
-                console.error('❌ Firebase 실패:', e);
                 const saved = localStorage.getItem('rhythmGameData');
                 gameDataAdmin = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(defaultGameWords));
                 setFirebaseStatus(false);
             }
             renderTimingControls();
-            renderLevelInputs(currentDifficultyAdmin);
         }
 
         window.selectGameAdmin = function(game) {
@@ -345,7 +550,7 @@
             document.querySelectorAll('.game-select-btn').forEach(b => b.classList.remove('active'));
             event.target.classList.add('active');
             renderTimingControls();
-            renderLevelInputs(currentDifficultyAdmin);
+            if (wordUnlocked) renderLevelInputs(currentDifficultyAdmin);
         };
 
         window.switchTab = function(difficulty) {
@@ -389,10 +594,7 @@
             try {
                 await set(ref(db, `flashOffsets/${currentGameAdmin}/${stage}`), 0);
                 setFirebaseStatus(true);
-            } catch (e) {
-                console.warn('⚠️ Firebase 초기화 실패:', e);
-                setFirebaseStatus(false);
-            }
+            } catch (e) { setFirebaseStatus(false); }
             localStorage.setItem(`flashOffset_${currentGameAdmin}_${stage}`, '0');
             const input = document.getElementById(`offset_${stage}`);
             if (input) input.value = '0';
@@ -409,9 +611,8 @@
                     localStorage.setItem(`flashOffset_${currentGameAdmin}_${stage}`, String(offset));
                 }
                 setFirebaseStatus(true);
-                alert('✅ 타이밍이 저장되었습니다!\n🌍 PC, 모바일 모든 기기에 동일하게 적용됩니다!');
+                alert('✅ 타이밍이 저장되었습니다!\n🌍 모든 기기에 적용됩니다!');
             } catch (e) {
-                console.error('❌ Firebase 저장 실패:', e);
                 setFirebaseStatus(false);
                 alert('❌ 저장 실패. 네트워크를 확인해주세요.');
             }
@@ -441,6 +642,7 @@
         }
 
         window.saveDifficulty = async function(difficulty) {
+            if (!wordUnlocked) { alert('🔒 단어 수정 잠금을 먼저 해제해주세요!'); return; }
             const newData = JSON.parse(JSON.stringify(gameDataAdmin));
             if (!newData[currentGameAdmin]) newData[currentGameAdmin] = {};
             if (!newData[currentGameAdmin][difficulty]) newData[currentGameAdmin][difficulty] = {};
@@ -459,14 +661,13 @@
                 const msgEl = document.getElementById(`${difficulty}Message`);
                 if (msgEl) {
                     msgEl.className = 'message success';
-                    msgEl.textContent = `✅ ${difficulty} 저장 완료! 모든 기기에 적용됩니다 🎉`;
+                    msgEl.textContent = `✅ 저장 완료! 모든 기기에 적용됩니다 🎉`;
                     msgEl.style.display = 'block';
                     setTimeout(() => { msgEl.style.display = 'none'; }, 3000);
                 }
             } catch (e) {
-                console.error('❌ Firebase 저장 실패:', e);
                 setFirebaseStatus(false);
-                alert('❌ 저장 실패. 네트워크를 확인해주세요.');
+                alert('❌ 저장 실패.');
             }
         };
 
@@ -479,6 +680,9 @@
             } else {
                 document.getElementById('passwordScreen').style.display = 'flex';
                 document.getElementById('adminScreen').style.display = 'none';
+            }
+            if (isLocked()) {
+                // 페이지 로드시 잠금 상태 복원
             }
         });
     </script>
