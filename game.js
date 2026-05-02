@@ -311,13 +311,22 @@ function displayLevel(level) {
     card.className = 'image-card';
     card.id = `card-${index}`;
 
-    if (currentGame === 'game3' || currentGame === 'game4' || currentGame === 'game5') {
+    if (currentGame === 'game3' || currentGame === 'game4') {
       card.textContent = wordImages[currentGame][word];
       card.style.fontSize = '50px';
       card.style.display = 'flex';
       card.style.justifyContent = 'center';
       card.style.alignItems = 'center';
+    } else if (currentGame === 'game5') {
+      card.textContent = wordImages[currentGame][word];
+      const isMobile = window.innerWidth < 600;
+      card.style.fontSize = isMobile ? '24px' : '36px';
+      card.style.fontWeight = 'bold';
+      card.style.display = 'flex';
+      card.style.justifyContent = 'center';
+      card.style.alignItems = 'center';
     } else {
+
       const img = document.createElement('img');
       img.src = wordImages[currentGame][word];
       img.alt = word;
