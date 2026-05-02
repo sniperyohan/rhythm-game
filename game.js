@@ -50,8 +50,14 @@ const wordImages = {
     '파랑': '🔵',
     '노랑': '🟡',
     '검정': '⚫'
+  },
+  game5: {
+    '홍학': '홍학',
+    '홍합': '홍합',
+    '홍삼': '홍삼'
   }
 };
+
 
 // ============================================================
 // 기본 게임 데이터
@@ -84,8 +90,16 @@ const DEFAULT_GAME_DATA = {
     3: ['빨강','파랑','노랑','파랑','파랑','빨강','파랑','노랑'],
     4: ['파랑','노랑','빨강','노랑','검정','파랑','빨강','파랑'],
     5: ['빨강','노랑','검정','파랑','빨강','검정','파랑','노랑']
+  },
+  game5: {
+    1: ['홍학','홍학','홍학','홍학','홍학','홍학','홍학','홍학'],
+    2: ['홍합','홍합','홍합','홍합','홍합','홍합','홍합','홍합'],
+    3: ['홍학','홍학','홍합','홍합','홍합','홍합','홍학','홍학'],
+    4: ['홍합','홍합','홍삼','홍학','홍학','홍삼','홍합','홍학'],
+    5: ['홍삼','홍삼','홍학','홍합','홍학','홍합','홍학','홍합']
   }
 };
+
 
 // ============================================================
 // 이미지 프리로드
@@ -112,7 +126,8 @@ async function loadGameData() {
     if (snapshot.exists()) {
       const raw = snapshot.val();
       const converted = {};
-      for (const game of ['game1', 'game2', 'game3', 'game4']) {
+      for (const game of ['game1', 'game2', 'game3', 'game4', 'game5']) {
+
         if (!raw[game]) {
           converted[game] = DEFAULT_GAME_DATA[game];
           continue;
@@ -225,8 +240,10 @@ function startGame() {
       game1: '🙏 조이패밀리',
       game2: '🔥 물불빵밥밤',
       game3: '🌈 색깔맞추기',
-      game4: '🎨 색깔맞추기2'
+      game4: '🎨 색깔맞추기2',
+      game5: '😂 웃기고싶다'
     };
+
     const diffLabels = {
       veryslow: '아주느림 🐌',
       slow: '느림 🐢',
@@ -294,7 +311,7 @@ function displayLevel(level) {
     card.className = 'image-card';
     card.id = `card-${index}`;
 
-    if (currentGame === 'game3' || currentGame === 'game4') {
+    if (currentGame === 'game3' || currentGame === 'game4' || currentGame === 'game5') {
       card.textContent = wordImages[currentGame][word];
       card.style.fontSize = '50px';
       card.style.display = 'flex';
