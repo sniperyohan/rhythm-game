@@ -387,38 +387,43 @@ async function initGame() {
   console.log('⏱️ cardShowTimes:', cardShowTimes);
   console.log('💥 firstFlashTimes:', firstFlashTimes);
 
-  // ✅ 오디오 재사용 + oncanplay에서 playbackRate 설정
+  // ✅ 음악이 완전히 준비되고 실제 재생이 시작된 뒤에 루프 출발
   if (!backgroundAudio) {
     backgroundAudio = new Audio('assets/sounds/background.mp3');
+    backgroundAudio.preload = 'auto';
   }
-  backgroundAudio.currentTime = 0;
   backgroundAudio.loop = false;
+  try { backgroundAudio.currentTime = 0; } catch (e) {}
 
-  backgroundAudio.oncanplay = function () {
-    console.log('🎵 oncanplay | playbackRate:', speed);
-    backgroundAudio.playbackRate = speed;
-    backgroundAudio.play().catch(e => console.warn('오디오 재생 실패:', e));
-    backgroundAudio.oncanplay = null;
-  };
+  await waitForAudioReady(backgroundAudio, 8000);
 
-  if (backgroundAudio.readyState >= 3) {
-    console.log('🎵 즉시 재생 | playbackRate:', speed);
-    backgroundAudio.playbackRate = speed;
-    backgroundAudio.play().catch(e => console.warn('오디오 재생 실패:', e));
-    backgroundAudio.oncanplay = null;
-  }
+  backgroundAudio.playbackRate = speed;
+  try { backgroundAudio.currentTime = 0; } catch (e) {}
+  await startPlayback(backgroundAudio);
+  console.log('🎵 재생 시작 확인 | playbackRate:', speed);
 
   let gameRunning = true;
-  let gameStartTime = performance.now();
   let currentLevel = 0;
   let currentImageIndex = -1;
+  const wallStart = performance.now();
+  let lastElapsed = 0;
+
+  // 음악의 실제 재생 위치를 기준 시계로 사용
+  function getElapsed() {
+    if (backgroundAudio && !backgroundAudio.paused && !backgroundAudio.ended
+        && backgroundAudio.currentTime > 0) {
+      lastElapsed = backgroundAudio.currentTime / speed;
+      return lastElapsed;
+    }
+    return Math.max(lastElapsed, (performance.now() - wallStart) / 1000);
+  }
 
   displayIntro();
 
   function gameLoop() {
     if (!gameRunning) return;
 
-    const elapsed = (performance.now() - gameStartTime) / 1000;
+    const elapsed = getElapsed();
 
     if (elapsed > introTime && document.getElementById('introScreen')) {
       hideIntro();
@@ -478,3 +483,40 @@ window.addEventListener('load', () => {
   preloadImages();
   console.log('✅ 페이지 로드 완료');
 });
+// ============================================================
+// 오디오 준비 헬퍼
+// ============================================================
+function waitForAudioReady(audio, timeoutMs = 8000) {
+  return new Promise(resolve => {
+    if (audio.readyState >= 4) return resolve(true);
+    let done = false;
+    const finish = ok => { if (done) return; done = true; cleanup(); resolve(ok); };
+    const onReady = () => finish(true);
+    const onError = () => finish(false);
+    const timer = setTimeout(() => finish(false), timeoutMs);
+    function cleanup() {
+      clearTimeout(timer);
+      audio.removeEventListener('canplaythrough', onReady);
+      audio.removeEventListener('error', onError);
+    }
+    audio.addEventListener('canplaythrough', onReady);
+    audio.addEventListener('error', onError);
+    audio.load();
+  });
+}
+
+function startPlayback(audio) {
+  return new Promise(resolve => {
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      audio.removeEventListener('playing', finish);
+      resolve();
+    };
+    audio.addEventListener('playing', finish);
+    const p = audio.play();
+    if (p && p.catch) p.catch(e => { console.warn('오디오 재생 실패:', e); finish(); });
+    setTimeout(finish, 1500);
+  });
+}
