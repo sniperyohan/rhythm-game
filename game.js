@@ -350,26 +350,27 @@ function displayLevel(level) {
     card.className = 'image-card';
     card.id = `card-${index}`;
 
-    if (currentGame === 'game3' || currentGame === 'game4') {
-      card.textContent = wordImages[currentGame][word];
-      card.style.fontSize = '50px';
-      card.style.display = 'flex';
-      card.style.justifyContent = 'center';
-      card.style.alignItems = 'center';
-    } else if (currentGame === 'game5') {
-      card.textContent = wordImages[currentGame][word];
-      const isMobile = window.innerWidth < 600;
-      card.style.fontSize = isMobile ? '24px' : '36px';
-      card.style.fontWeight = 'bold';
-      card.style.display = 'flex';
-      card.style.justifyContent = 'center';
-      card.style.alignItems = 'center';
-    } else {
+    const display = (wordImages[currentGame] && wordImages[currentGame][word]) || word;
+    const isImagePath = typeof display === 'string' && /\.(png|jpg|jpeg|gif|webp|svg)$/i.test(display);
+    const isEmojiOnly = !isImagePath && !/[가-힣a-zA-Z0-9]/.test(display);
 
+    if (isImagePath) {
       const img = document.createElement('img');
-      img.src = wordImages[currentGame][word];
+      img.src = display;
       img.alt = word;
       card.appendChild(img);
+    } else {
+      card.textContent = display;
+      const isMobile = window.innerWidth < 600;
+      if (isEmojiOnly) {
+        card.style.fontSize = isMobile ? '40px' : '50px';
+      } else {
+        card.style.fontSize = isMobile ? '24px' : '36px';
+        card.style.fontWeight = 'bold';
+      }
+      card.style.display = 'flex';
+      card.style.justifyContent = 'center';
+      card.style.alignItems = 'center';
     }
 
     grid.appendChild(card);
