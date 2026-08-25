@@ -375,7 +375,7 @@ async function initGame() {
   };
 
   // ✅ 기본 플래시 타임 업데이트 (딱 맞는 값으로)
-  const baseTimes = [5.50, 10.70, 15.95, 21.25, 26.45];
+  const baseTimes = [5.30, 10.50, 15.75, 21.05, 26.25];
 
   const firstFlashTimes = {};
   for (let s = 1; s <= 5; s++) {
